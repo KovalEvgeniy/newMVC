@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="MySQL - mvc@localhost">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="2.6">
+    <schema id="1" name="mvc">
+      <visible>1</visible>
+    </schema>
+    <schema id="2" name="dating"/>
+    <schema id="3" name="first"/>
+    <schema id="4" name="hipe"/>
+    <schema id="5" name="information_schema"/>
+    <schema id="6" name="mysql"/>
+    <schema id="7" name="performance_schema"/>
+    <schema id="8" name="sys"/>
+    <schema id="9" name="todo"/>
+    <table id="10" parent="1" name="user"/>
+    <table id="11" parent="1" name="Customer"/>
+    <table id="12" parent="1" name="test"/>
+    <column id="13" parent="10" name="Id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="14" parent="10" name="FirstName">
+      <mandatory>1</mandatory>
+      <data-type>varchar(30)|0</data-type>
+    </column>
+    <column id="15" parent="10" name="City">
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <column id="16" parent="10" name="lastname">
+      <mandatory>1</mandatory>
+      <data-type>varchar(30)|0</data-type>
+    </column>
+    <column id="17" parent="10" name="age">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="18" parent="10" name="email">
+      <data-type>varchar(30)|0</data-type>
+    </column>
+    <key id="19" parent="10" name="PRIMARY">
+      <columns>Id
+Id
+Id
+Id</columns>
+      <primary>1</primary>
+    </key>
+    <column id="20" parent="11" name="Id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="21" parent="11" name="Firstname">
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <column id="22" parent="11" name="Phone">
+      <data-type>varchar(11)|0</data-type>
+    </column>
+    <index id="23" parent="11" name="Customer_Id_uindex">
+      <columns>Id</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <key id="24" parent="11" name="PRIMARY">
+      <columns>Id</columns>
+      <primary>1</primary>
+    </key>
+    <key id="25" parent="11" name="Customer_Id_uindex">
+      <columns>Id</columns>
+      <underlying-index>Customer_Id_uindex</underlying-index>
+    </key>
+    <column id="26" parent="12" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="27" parent="12" name="name">
+      <data-type>varchar(50)|0</data-type>
+    </column>
+    <column id="28" parent="12" name="age">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <key id="29" parent="12" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+  </database-model>
+</dataSource>
