@@ -45,7 +45,7 @@ class ModelDatabase
                     }
                 }
 
-                if ($key === 'or') {
+                if ($key === 'or') {//@todo если еще нет where то кинуть ошибку SELECT id,name,age,text,created_at,updated_at FROM test OR id=:id WHERE id BETWEEN :id2 AND :id3 ORDER BY id DESC
                     foreach ($value as $index => $element) {
                         $this->sql .= ' OR ' . $element;
                     }
