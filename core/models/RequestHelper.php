@@ -17,7 +17,7 @@ trait RequestHelper
         '!=' => '!=',
     ];
 
-    public function select($select)
+    public function select($select)//@todo обработать пустую стороку
     {
         if (!is_array($select) && !empty($select)) {
             $select = explode(',', str_replace(" ", "", $select));
@@ -25,6 +25,8 @@ trait RequestHelper
         foreach ($select as $key => $value) {
             $this->request['select'][] = $value;
         }
+        //@todo$this->request['select'] = $select;
+
         return $this;
     }
 
@@ -38,10 +40,6 @@ trait RequestHelper
             $this->setArray($where, 'and');
         }
 
-        if ($where[0] === 'or') {
-            $where = array_splice($where, 1);
-            $this->setArray($where, 'or');
-        }
         return $this;
     }
 
@@ -56,7 +54,7 @@ trait RequestHelper
 
     public function parseWhere($param)
     {
-        $result=[];
+        $result = [];
         $countWhere = count($param);
         if ($countWhere === 1) {
             $key = key($param);
@@ -64,10 +62,9 @@ trait RequestHelper
         } elseif ($countWhere === 2) {
             $result[] = "$param[0]=:" . $this->getNewArgumentName($param[0], $param[1]);
         } elseif ($countWhere === 3) {
-            $result[] = "$param[0]".$this->inspectionValues($param[1]).":"
+            $result[] = "$param[0]" . $this->inspectionValues($param[1]) . ":"
                 . $this->getNewArgumentName($param[0], $param[2]);
-        }
-        elseif ($countWhere === 4 && strtolower($param[1]) === 'between') {
+        } elseif ($countWhere === 4 && strtolower($param[1]) === 'between') {
             $result[] = $param[0] . " " . strtoupper($param[1]) . " "
                 . ":" . $this->getNewArgumentName($param[0], $param[2])
                 . " AND " . ":" . $this->getNewArgumentName($param[0], $param[3]);
@@ -78,13 +75,14 @@ trait RequestHelper
     public function __call($name, $arguments)
     {
         $deleteStrAnd = 5;
-        if (stristr(strtolower($name), 'and')) {
-            $parseParam = explode('and',strtolower(substr_replace($name, '', 0, $deleteStrAnd)));
+        if (stristr(strtolower($name), 'and')) {//@todo stripos() для происка вхождения
+            $parseParam = explode('and', strtolower(substr_replace($name, '', 0, $deleteStrAnd)));
             $result = [];
             foreach ($parseParam as $key => $value) {
-                $result[] = [$value => $arguments[$key]];
+                $result[] = [$value => $arguments[$key]];//@todo проверка на isset
             }
-            foreach ($result as $key => $value) {
+            //@todo зачем 2 цикла, можно сделать без result
+            foreach ($result as $key => $value) {//@todo $key не используется
                 if (!isset($this->request['where']['and'])) {
                     $this->request['where']['and'] = $this->parseWhere($value);
                 } else {
@@ -97,34 +95,39 @@ trait RequestHelper
 
     }
 
-    public function whereBetween(...$param)
+    public function whereBetween(...$param)//@todo проверка параметров
     {
-        $this->where($param[0], 'between', $param[1], $param[2]);
+        $this->where($param[0], 'between', $param[1], $param[2]);//@todo parseWhere($param[0], 'between', $param[1], $param[2])
         return $this;
     }
 
-    public function orWhereBetween(...$param)
+    public function orWhereBetween(...$param)//@todo проверка параметров
     {
-        $this->where($or = 'or', $param[0], 'between', $param[1], $param[2]);
+        //@todo зачем $or
+        $this->where($or = 'or', $param[0], 'between', $param[1], $param[2]);//@todo parseWhere()
         return $this;
     }
 
-    public function orWhere(...$orWhere)
+    public function orWhere(...$orWhere)//@todo эта логика есть в setArray(), orWhere() должен быть как и where()
     {
         foreach ($orWhere as $key => $value) {
             if (!isset($this->request['where']['or'])) {
                 $this->request['where']['or'] = $this->parseWhere($value);
             } else {
                 $this->request['where']['or'] = array_merge($this->request['where']['or'], $this->parseWhere($value));
-
             }
         }
 
         return $this;
     }
 
-    public function orderBy($orderBy, $reverse = 'ASC')
+    public function orderBy($orderBy, $reverse = 'ASC')//@todo url=https://translate.google.com/#en/ru/reverse
     {
+//        [@todo обработать
+//            'id' => 'asc',
+//            'name',
+//            'age' => 'desc',
+//        ]
         if (!is_array($orderBy)) {
             $orderBy = explode(',', str_replace(" ", "", $orderBy));
         }
@@ -136,15 +139,14 @@ trait RequestHelper
 
     protected function getNewArgumentName($key, $value)
     {
-        $count = 5;
-        if (!isset($this->arguments[$key])) {
+        $count = 5;//@todo вынетси в свойстово класса и сеттер
+        if (!isset($this->arguments[$key])) {//@todo array_key_exists или isset
             $this->arguments[$key] = $value;
             return $key;
         }
         for ($i = 2; $i <= $count; $i++) {
-            $element = $key.$i;
-
-            if (array_key_exists($element, $this->arguments) === false) {
+            $element = $key . $i;
+            if (array_key_exists($element, $this->arguments) === false) {//@todo array_key_exists или isset
                 $this->arguments[$element] = $value;
                 return $element;
             }

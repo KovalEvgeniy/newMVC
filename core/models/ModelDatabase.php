@@ -10,6 +10,7 @@ class ModelDatabase
     protected $connect;
     protected $defaultSelect = ['*'];
     protected $sql = '';
+
     public $result;
 
     public function __construct()
@@ -34,7 +35,7 @@ class ModelDatabase
 
         if (array_key_exists('where', $this->request)) {
             foreach ($this->request['where'] as $key => $value) {
-                if($key === 'and') {
+                if ($key === 'and') {
                     foreach ($value as $index => $element) {
                         if (stristr($this->sql, 'WHERE')) {
                             $this->sql .= ' AND ' . $element;

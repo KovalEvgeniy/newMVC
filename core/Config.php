@@ -10,15 +10,15 @@ final class Config
             return $default;
         }
 
-        return self::$_config[$key];
+        return self::$_config[$key];//@todo self::$_config[$key] ?? $default
     }
 
     public static function set($key, $value)
     {
-        self::$_config[$key] = $value;
+        self::$_config[$key] = $value;//@todo проверка на существование
     }
 
-    protected function __construct() {}
+    protected function __construct() {} //@todo private
 
     private function __clone()
     {
@@ -28,4 +28,5 @@ final class Config
     {
 
     }
+    //@todo __sleep()
 }

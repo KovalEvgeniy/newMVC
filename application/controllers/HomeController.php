@@ -6,7 +6,7 @@ use core\controllers\BaseController;
 
 class HomeController extends BaseController
 {
-    public function index()
+    public function index($id)
     {
         return $this->view('home::index');
     }

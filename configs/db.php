@@ -3,6 +3,6 @@
 return [
     'host' => 'localhost',
     'username' => 'root',
-    'dbname' => 'mvc',
-    'password' => '',
+    'dbname' => 'test',
+    'password' => '123qwe',
 ];

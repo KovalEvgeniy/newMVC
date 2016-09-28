@@ -16,7 +16,7 @@ class Route
         $parseUrl = $this->parseUrl();
         switch (count($parseUrl)) {
             case 0 :
-                $this->setDefaultController();
+                $this->setDefaultController();//@todo должен вызывать runControllerAction()
                 break;
             case 1 :
                 $this->setApplication($parseUrl[0]);
@@ -49,7 +49,7 @@ class Route
                 }
             }
             (new $this->controller())->$action(...$result);
-        } elseif ($parameters->getNumberOfParameters() == 0) {
+        } elseif ($parameters->getNumberOfParameters() == 0) {//@todo не отработает из за условия выше
             (new $this->controller())->$action();
         } else {
             new \application\exceptions\Exception('Need parameters for action!');
@@ -59,15 +59,16 @@ class Route
     protected function setDefaultController()
     {
         $this->controller = $this->conf['default_controller'];
-        $action = $this->conf['default_action'];
+        $action = $this->conf['default_action'];//@todo сортировка параметров
         (new $this->controller())->$action($this->params);
     }
-    protected function setApplication($url)
+
+    protected function setApplication($url)//@todo название
     {
         $this->controller = str_replace('{controller}', ucfirst($url), $this->conf['path_application']);
     }
 
-    protected function setModules($url)
+    protected function setModules($url)//@todo название
     {
         $this->controller = str_replace(['{module}', '{controller}'], [
             '{module}' => ucfirst($url[0]),
@@ -82,7 +83,7 @@ class Route
             $params = explode('&', $urls['query']);
             foreach ($params as $param) {
                 $element = explode('=', $param);
-                $this->params[$element[0]] = $element[1];//
+                $this->params[$element[0]] = $element[1];//@todo проверить на существование
             }
         }
         if ($urls['path'] === '/') {

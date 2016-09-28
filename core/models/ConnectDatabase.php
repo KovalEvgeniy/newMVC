@@ -16,7 +16,7 @@ class ConnectDatabase
 
         $db = include \Config::get('root_path') . '/configs/db.php';
 
-        try {
+        try {//@todo должен быть общий обработчик ошибок
             self::$_connection = new \PDO(
                 "mysql:host=" . $db['host'] . ";dbname=" . $db['dbname'], $db['username'], $db['password']
             );
@@ -26,5 +26,5 @@ class ConnectDatabase
         return self::$_connection;
     }
 
-    private function __clone() {}
+    private function __clone() {}//@todo __wakeup() __sleep()
 }

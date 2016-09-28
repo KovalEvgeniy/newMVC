@@ -11,7 +11,6 @@ class TestController extends BaseController
     {
         $data = (new Test())
             ->select(['id', 'name', 'age', 'text', 'created_at', 'updated_at'])
-            ->where('id', '!=', 100000)
             ->whereBetween('id', $from, $to)
             ->orderBy('id', 'desc')
             ->all();
