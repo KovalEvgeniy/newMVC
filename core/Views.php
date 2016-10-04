@@ -2,13 +2,16 @@
 
 namespace core;
 
+use core\Config;
+
 class Views
 {
     protected $conf;
 
     public function view($view, $params, $controller)
     {
-        $this->conf = require('../configs/router.php');//@todo абсолютные пути у вьюх должен быть отдельное письмо
+        $this->conf = require(Config::get('root_path').'/configs/router_views.php');
+//        dd($this->conf);
         $path = str_replace(['Controller', 'controllers\\'], '', stristr($controller, 'Controller'));
 
         foreach ($params as $key => $value) { //@todo extract()
@@ -47,7 +50,7 @@ class Views
         return $view = str_replace(['{module}', '{view}','{action}'], [//@todo зачем $view??
             '{module}' => ucfirst($path),
             '{view}' => strtolower($path),
-            '{action}' => $url[1] ?? $this->conf['default_action'],//@todo не должно быть дефолтного
+            '{action}' => $url[1] ,//?? $this->conf['default_action'],//@todo не должно быть дефолтного
 //            '{action}' => $url ?? $this->conf['default_action'],//@todo
         ], $this->conf['path_module_views']);
     }

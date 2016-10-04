@@ -14,7 +14,7 @@ class TestController extends BaseController
             ->whereBetween('id', $from, $to)
             ->orderBy('id', 'desc')
             ->all();
-dd($data);
+
         return $this->view('index', [
             'response' => $data,
         ]);

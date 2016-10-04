@@ -2,6 +2,8 @@
 
 namespace core\models;
 
+use application\exceptions\Exception;
+
 class ConnectDatabase
 {
     private static $_connection;
@@ -14,17 +16,19 @@ class ConnectDatabase
             return self::$_connection;
         }
 
-        $db = include \Config::get('root_path') . '/configs/db.php';
+        $db = include \core\Config::get('root_path') . '/configs/db.php';
 
-        try {//@todo должен быть общий обработчик ошибок
+        try {
             self::$_connection = new \PDO(
                 "mysql:host=" . $db['host'] . ";dbname=" . $db['dbname'], $db['username'], $db['password']
             );
         } catch (\PDOException $e) {
-            echo "<br>" . $e->getMessage();
+           new Exception($e->getMessage());
         }
         return self::$_connection;
     }
 
-    private function __clone() {}//@todo __wakeup() __sleep()
+    private function __clone() {}
+    private function __wakeup() {}
+    private function __sleep() {}
 }

@@ -11,7 +11,8 @@ class Autoload
 
     public function load()
     {
-        $classPath = Config::get('root_path') . '/' .
+//        $classPath = Config::get('root_path') . '/' .
+        $classPath = __DIR__ . '/../' .
             str_replace("\\", "/", $this->className) . '.php';
 
         if (file_exists($classPath)) {

@@ -1,5 +1,7 @@
 <?php
 
+namespace core;
+
 final class Config
 {
     private static $_config = [];
@@ -10,23 +12,19 @@ final class Config
             return $default;
         }
 
-        return self::$_config[$key];//@todo self::$_config[$key] ?? $default
+        return self::$_config[$key] ?? $default;
     }
 
     public static function set($key, $value)
     {
-        self::$_config[$key] = $value;//@todo проверка на существование
+        if ( !array_key_exists($value, self::$_config) ){
+            self::$_config[$key] = $value;
+        }
     }
 
-    protected function __construct() {} //@todo private
+    private function __construct() {}
 
-    private function __clone()
-    {
-
-    }
-    private function __wakeup()
-    {
-
-    }
-    //@todo __sleep()
+    private function __clone() {}
+    private function __wakeup() {}
+    private function __sleep() {}
 }

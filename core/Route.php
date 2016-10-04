@@ -16,18 +16,19 @@ class Route
         $parseUrl = $this->parseUrl();
         switch (count($parseUrl)) {
             case 0 :
-                $this->setDefaultController();//@todo должен вызывать runControllerAction()
+                $this->setDefaultController();
+                $this->runControllerAction($this->conf['default_action']);
                 break;
             case 1 :
-                $this->setApplication($parseUrl[0]);
+                $this->setApplicationController($parseUrl[0]);
                 $this->runControllerAction($this->conf['default_action']);
                 break;
             case 2 :
-                $this->setApplication($parseUrl[0]);
+                $this->setApplicationController($parseUrl[0]);
                 $this->runControllerAction($parseUrl[1]);
                 break;
             case 3 :
-                $this->setModules($parseUrl);
+                $this->setModulesController($parseUrl);
                 $this->runControllerAction($parseUrl[2]);
                 break;
             default:
@@ -49,26 +50,23 @@ class Route
                 }
             }
             (new $this->controller())->$action(...$result);
-        } elseif ($parameters->getNumberOfParameters() == 0) {//@todo не отработает из за условия выше
-            (new $this->controller())->$action();
         } else {
             new \application\exceptions\Exception('Need parameters for action!');
         }
+
     }
 
     protected function setDefaultController()
     {
         $this->controller = $this->conf['default_controller'];
-        $action = $this->conf['default_action'];//@todo сортировка параметров
-        (new $this->controller())->$action($this->params);
     }
 
-    protected function setApplication($url)//@todo название
+    protected function setApplicationController($url)
     {
         $this->controller = str_replace('{controller}', ucfirst($url), $this->conf['path_application']);
     }
 
-    protected function setModules($url)//@todo название
+    protected function setModulesController($url)
     {
         $this->controller = str_replace(['{module}', '{controller}'], [
             '{module}' => ucfirst($url[0]),
@@ -83,7 +81,9 @@ class Route
             $params = explode('&', $urls['query']);
             foreach ($params as $param) {
                 $element = explode('=', $param);
-                $this->params[$element[0]] = $element[1];//@todo проверить на существование
+                if ( !empty($element[0]) && !empty($element[1]) ) {
+                    $this->params[$element[0]] = $element[1];
+                }
             }
         }
         if ($urls['path'] === '/') {

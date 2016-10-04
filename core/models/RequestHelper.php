@@ -7,6 +7,7 @@ use application\exceptions\Exception;
 trait RequestHelper
 {
     protected $request;
+    protected $count = 5;
     protected $arguments;
     protected $validationParams = [
         '>=' => '>=',
@@ -17,15 +18,18 @@ trait RequestHelper
         '!=' => '!=',
     ];
 
-    public function select($select)//@todo обработать пустую стороку
+    public function select($select)
     {
         if (!is_array($select) && !empty($select)) {
             $select = explode(',', str_replace(" ", "", $select));
+
+//            foreach ($select as $key => $value) {
+//                $this->request['select'][] = $value;
+//            }
+            $this->request['select'] = $select;
+        } else {
+            $this->request['select'][] = '*';
         }
-        foreach ($select as $key => $value) {
-            $this->request['select'][] = $value;
-        }
-        //@todo$this->request['select'] = $select;
 
         return $this;
     }
@@ -79,10 +83,12 @@ trait RequestHelper
             $parseParam = explode('and', strtolower(substr_replace($name, '', 0, $deleteStrAnd)));
             $result = [];
             foreach ($parseParam as $key => $value) {
-                $result[] = [$value => $arguments[$key]];//@todo проверка на isset
+                if ( !isset($value) && !isset($arguments[$key]) ) {
+                    $result[] = [$value => $arguments[$key]];                        //@todo проверка на isset
+                }
             }
             //@todo зачем 2 цикла, можно сделать без result
-            foreach ($result as $key => $value) {//@todo $key не используется
+            foreach ($result as $value) {
                 if (!isset($this->request['where']['and'])) {
                     $this->request['where']['and'] = $this->parseWhere($value);
                 } else {
@@ -97,14 +103,14 @@ trait RequestHelper
 
     public function whereBetween(...$param)//@todo проверка параметров
     {
-        $this->where($param[0], 'between', $param[1], $param[2]);//@todo parseWhere($param[0], 'between', $param[1], $param[2])
+        $this->where($param[0], 'between', $param[1], $param[2]);//@todo setArray($param[0], 'between', $param[1], $param[2])
         return $this;
     }
 
     public function orWhereBetween(...$param)//@todo проверка параметров
     {
         //@todo зачем $or
-        $this->where($or = 'or', $param[0], 'between', $param[1], $param[2]);//@todo parseWhere()
+        $this->where('or', $param[0], 'between', $param[1], $param[2]);//@todo setArray()
         return $this;
     }
 
@@ -121,7 +127,7 @@ trait RequestHelper
         return $this;
     }
 
-    public function orderBy($orderBy, $reverse = 'ASC')//@todo url=https://translate.google.com/#en/ru/reverse
+    public function orderBy($orderBy, $sort = 'ASC')
     {
 //        [@todo обработать
 //            'id' => 'asc',
@@ -132,21 +138,20 @@ trait RequestHelper
             $orderBy = explode(',', str_replace(" ", "", $orderBy));
         }
         foreach ($orderBy as $key => $value) {
-            $this->request['order'][] = $value . " " . strtoupper($reverse);
+            $this->request['order'][] = $value . " " . strtoupper($sort);
         }
         return $this;
     }
 
     protected function getNewArgumentName($key, $value)
     {
-        $count = 5;//@todo вынетси в свойстово класса и сеттер
-        if (!isset($this->arguments[$key])) {//@todo array_key_exists или isset
+        if (!isset($this->arguments[$key])) {                             //ok//@todo array_key_exists или isset
             $this->arguments[$key] = $value;
             return $key;
         }
-        for ($i = 2; $i <= $count; $i++) {
+        for ($i = 2; $i <= $this->count; $i++) {
             $element = $key . $i;
-            if (array_key_exists($element, $this->arguments) === false) {//@todo array_key_exists или isset
+            if (!isset($this->arguments[$element])) {                            //ok//@todo array_key_exists или isset
                 $this->arguments[$element] = $value;
                 return $element;
             }
