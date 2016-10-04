@@ -6,12 +6,13 @@ use core\Config;
 
 class Views
 {
-    protected $conf;
+    protected $conf_views;
+    protected $conf_route;
 
     public function view($view, $params, $controller)
     {
-        $this->conf = require(Config::get('root_path').'/configs/router_views.php');
-//        dd($this->conf);
+        $this->conf_route = require(Config::get('root_path').'/configs/router.php');
+        $this->conf_views = require(Config::get('root_path').'/configs/router_views.php');
         $path = str_replace(['Controller', 'controllers\\'], '', stristr($controller, 'Controller'));
 
         foreach ($params as $key => $value) { //@todo extract()
@@ -41,28 +42,28 @@ class Views
 //            $view = $this->setApplication($path, $viewPath[1] ?? $viewPath[0]);
 //        }
 
-        require(\Config::get('root_path') . $view . '.php');
+        require(\core\Config::get('root_path') . $view . '.php');
     }
 
     protected function setModules($path, $url = [])
-//    protected function setModules($path, $url)//@todo
+//    protected function setModules($path, $url)
     {
-        return $view = str_replace(['{module}', '{view}','{action}'], [//@todo зачем $view??
+        return str_replace(['{module}', '{dir}','{action}'], [
             '{module}' => ucfirst($path),
-            '{view}' => strtolower($path),
-            '{action}' => $url[1] ,//?? $this->conf['default_action'],//@todo не должно быть дефолтного
-//            '{action}' => $url ?? $this->conf['default_action'],//@todo
-        ], $this->conf['path_module_views']);
+            '{dir}' => strtolower($path),
+            '{action}' => $url[0] ?? $this->conf_route['default_action'],
+        ], $this->conf_views['path_module_views']);
+//            '{action}' => $url[1] ,//?? $this->conf['default_action'],//@todo не должно быть дефолтного
     }
 
     protected function setApplication($path, $url = [])
 //    protected function setApplication($path, $url)//@todo
     {
-        return $view = str_replace(['{view}', '{action}'], [//@todo зачем $view??
-            '{view}' => strtolower($path),
-            '{action}' => $url[1] ?? $this->conf['default_action'],//@todo не должно быть дефолтного
-//            '{action}' => $url,//@todo
-        ], $this->conf['path_views']);
+        return str_replace(['{dir}', '{action}'], [
+            '{dir}' => strtolower($path),
+            '{action}' => $url ?? $this->conf_route['default_action'],
+        ], $this->conf_views['path_views']);
+//            '{action}' => $url[1] ,//@todo не должно быть дефолтного
     }
 
 }
